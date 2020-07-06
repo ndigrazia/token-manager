@@ -4,18 +4,16 @@ import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
 public class TokenManagerResourceTest {
 
     @Test
-    public void testHelloEndpoint() {
+    public void testTokenEndpoint() {
         given()
-          .when().get("/hello")
+          .when().get("/token?provider=afip")
           .then()
-             .statusCode(200)
-             .body(is("hello"));
+             .statusCode(200);
     }
 
 }
