@@ -5,7 +5,7 @@ import java.util.Date;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
 @RegisterForReflection
-public class Token {
+public class TokenResponse {
 
     private String token;
     private Date date;

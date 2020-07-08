@@ -12,14 +12,19 @@ import java.util.Date;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.HttpHeaders;
 
-import com.telefonica.architecture.tokenmanager.manager.client.PostResourceClient;
+import com.telefonica.architecture.tokenmanager.manager.client.ResourceProviderClient;
+import com.telefonica.architecture.tokenmanager.manager.client.TokenProvider;
 import com.telefonica.architecture.tokenmanager.manager.exception.TokenException;
-import com.telefonica.architecture.tokenmanager.manager.model.Token;
-import com.telefonica.architecture.tokenmanager.manager.str.TokenStr;
+import com.telefonica.architecture.tokenmanager.manager.model.TokenResponse;
+import com.telefonica.architecture.tokenmanager.manager.str.TokenResponseStr;
 import com.telefonica.architecture.tokenmanager.redis.RedisClient;
+
+import redis.clients.jedis.Jedis;
 
 @Path("/token")
 @Produces(MediaType.APPLICATION_JSON)
@@ -27,48 +32,63 @@ import com.telefonica.architecture.tokenmanager.redis.RedisClient;
 public class TokenManagerResource {
 
     @Inject    
-    RedisClient  redis;
+    private RedisClient  redis;
 
     @Inject
-    PostResourceClient client;
+    private ResourceProviderClient client;
 
     @GET
-    public Token getToken(@QueryParam("provider") String provider) {
+    public TokenResponse getToken(@Context final HttpHeaders headers, @QueryParam("provider") final String provider) {
         try {
-            return TokenStr.getToken(redis, (con)->{
-                Token token = new Token();
-            
-                Date currentDate = new Date();
-                token.setDate(currentDate);          
-               //String value = con.get(provider);
-                token.setToken(client.getToken().getId());
-           
-                return token;
+                TokenResponseStr str = new TokenResponseStr();
+                TokenResponse token = str.getToken(redis, (con)->{
+                String key = "tokens:"+ provider;
+                
+                String value = con.get(key);
+                if(value == null)
+                    value = loadTokenFromProvider(provider, con);
+                
+                return createResponse(value);
             });
-        } catch (TokenException e) {
+            return token;
+        } catch (final TokenException e) {
+            e.printStackTrace();
             throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 
+    private String loadTokenFromProvider(String provider, Jedis con) throws TokenException {
+        TokenProvider token = client.getToken(provider);
+        
+        String json = token.attributesToJson();
+
+        String key = "tokens:"+ provider;
+
+        con.set(key, json);
+        con.expire(key, token.getExpires_in());
+
+        return json;
+    }
+
+    private TokenResponse createResponse(String value) {
+        final TokenResponse token = new TokenResponse();
+
+        token.setDate(new Date());   
+        token.setToken(value);
+       
+        return token;
+    }
+
     @POST
-    public Token postToken(@HeaderParam("provider") String provider) {
+    public TokenResponse postToken(@Context final HttpHeaders headers, @HeaderParam("provider") final String provider) {
         try {
-            return TokenStr.getToken(redis, (con)->{
-                Token token = new Token();
-            
-                String value = "algun valor";
-                int seconds = 1000;
-
-                con.set(provider, value);
-                con.expire(provider, seconds);
-
-                Date currentDate = new Date();
-                token.setDate(currentDate);   
-                token.setToken(value);
-
-                return token;
+            TokenResponseStr str = new TokenResponseStr();
+            TokenResponse token = str.getToken(redis, (con)->{
+                return createResponse(loadTokenFromProvider(provider, con));
             });
-        } catch (TokenException e) {
+            return token;
+        } catch (final TokenException e) {
+            e.printStackTrace();
             throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
     }

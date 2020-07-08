@@ -11,7 +11,7 @@ public class TokenManagerResourceTest {
     @Test
     public void testTokenEndpoint() {
         given()
-          .when().get("/token?provider=afip")
+          .when().get("/token?provider=openshift")
           .then()
              .statusCode(200);
     }

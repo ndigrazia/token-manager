@@ -26,7 +26,7 @@ public class RedisClient {
 		this(new JedisPoolConfig());
 	}
 
-    public RedisClient(final JedisPoolConfig config) {
+    public RedisClient(JedisPoolConfig config) {
         this.config = config;
     }
 
@@ -39,20 +39,22 @@ public class RedisClient {
 
     @PreDestroy
     public void closePool() {
-        if(pool != null) 
+        if(pool != null)  { 
             pool.close();
+            pool = null;
+        }
     }
 
     public Jedis getConnection() {
         return pool.getResource();
     }
 
-    public void destroyConnection(final Jedis redis) {
-        if(redis != null)
+    public void destroyConnection(Jedis redis) {
+        if(redis != null) 
             redis.close();
     }
 
-    public void returnConnection(final Jedis redis) {
+    public void returnConnection(Jedis redis) {
         if (redis != null)
             pool.returnResource(redis);
     }
@@ -61,7 +63,7 @@ public class RedisClient {
 		return config;
 	}
 
-	public void setConfig(final JedisPoolConfig config) {
+	public void setConfig(JedisPoolConfig config) {
 		this.config = config;
 	}
 

@@ -4,8 +4,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import com.telefonica.architecture.tokenmanager.manager.exception.TokenException;
-import com.telefonica.architecture.tokenmanager.manager.model.Token;
-import com.telefonica.architecture.tokenmanager.manager.str.TokenStr;
+import com.telefonica.architecture.tokenmanager.manager.model.TokenResponse;
+import com.telefonica.architecture.tokenmanager.manager.str.TokenResponseStr;
 import com.telefonica.architecture.tokenmanager.redis.RedisClient;
 
 import org.eclipse.microprofile.health.HealthCheck;
@@ -27,14 +27,15 @@ public class ReadinessHealthCheck implements HealthCheck {
         HealthCheckResponseBuilder responseBuilder = HealthCheckResponse.named("Redis connection health check");
 
         try {
-            TokenStr.getToken(redis, (con)->{
+            TokenResponseStr str = new TokenResponseStr();
+            str.getToken(redis, (con)->{
                 if (con.ping().equalsIgnoreCase(PONG)) {
                     responseBuilder.up();
                 } else {
                     responseBuilder.down();
                 }
 
-                return new Token();
+                return new TokenResponse();
             });
         } catch (TokenException e) {
             responseBuilder.down();
