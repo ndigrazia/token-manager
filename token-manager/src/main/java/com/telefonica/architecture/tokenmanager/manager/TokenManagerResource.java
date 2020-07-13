@@ -9,6 +9,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 
 import java.util.Date;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -32,20 +33,20 @@ import redis.clients.jedis.Jedis;
 public class TokenManagerResource {
 
     @Inject    
-    private RedisClient  redis;
+    RedisClient  redis;
 
     @Inject
-    private ResourceProviderClient client;
+    ResourceProviderClient client;
 
     @GET
     public TokenResponse getToken(@Context final HttpHeaders headers, @QueryParam("provider") final String provider) {
         try {
                 TokenResponseStr str = new TokenResponseStr();
                 TokenResponse token = str.getToken(redis, (con)->{
-                String key = "tokens:"+ provider;
                 
-                String value = con.get(key);
-                if(value == null)
+                Map<String, String> value = con.hgetAll(getKeyProvider(provider));
+
+                if(value == null || value.isEmpty())
                     value = loadTokenFromProvider(provider, con);
                 
                 return createResponse(value);
@@ -57,24 +58,29 @@ public class TokenManagerResource {
         }
     }
 
-    private String loadTokenFromProvider(String provider, Jedis con) throws TokenException {
+    private Map<String, String> loadTokenFromProvider(String provider, Jedis con) throws TokenException {
         TokenProvider token = client.getToken(provider);
         
-        String json = token.attributesToJson();
+        String key = getKeyProvider(provider);
 
-        String key = "tokens:"+ provider;
+        Map<String, String> map = token.toMap();
 
-        con.set(key, json);
+        con.hmset(key, map);
         con.expire(key, token.getExpires_in());
 
-        return json;
+        return map;
     }
 
-    private TokenResponse createResponse(String value) {
+    private String getKeyProvider(String provider) {
+        return  "tokens:"+ provider;
+    }
+
+    private TokenResponse createResponse(Map<String, String> map) {
         final TokenResponse token = new TokenResponse();
 
         token.setDate(new Date());   
-        token.setToken(value);
+        token.setType(map.get(TokenProvider.TOKEN_TYPE));
+        token.setToken(map.get(TokenProvider.TOKEN_VALUE));
        
         return token;
     }

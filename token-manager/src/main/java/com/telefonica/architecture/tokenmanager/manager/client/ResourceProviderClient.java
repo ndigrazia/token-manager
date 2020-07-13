@@ -24,7 +24,7 @@ public class ResourceProviderClient {
     private Client client;
 
     @Inject
-    private Config config;
+    Config config;
 
     @PostConstruct
     public void createThreadPool() {

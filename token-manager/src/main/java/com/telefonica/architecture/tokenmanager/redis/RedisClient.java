@@ -17,10 +17,10 @@ public class RedisClient {
     private JedisPool pool;
 
     @ConfigProperty(name = "redis.host") 
-    private String host;
+    String host;
     
     @ConfigProperty(name = "redis.http.port") 
-    private String port;
+    String port;
 
     public RedisClient() {
 		this(new JedisPoolConfig());

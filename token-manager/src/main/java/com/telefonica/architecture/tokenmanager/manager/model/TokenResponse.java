@@ -7,6 +7,7 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 @RegisterForReflection
 public class TokenResponse {
 
+	private String type;
     private String token;
     private Date date;
 
@@ -22,6 +23,14 @@ public class TokenResponse {
 	}
 	public void setDate(Date date) {
 		this.date = date;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 }

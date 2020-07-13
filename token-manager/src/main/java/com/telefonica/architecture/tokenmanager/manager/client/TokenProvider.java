@@ -1,14 +1,19 @@
 package com.telefonica.architecture.tokenmanager.manager.client;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.google.gson.JsonObject;
 
 public class TokenProvider {
-    
+	
+	public static final String TOKEN_TYPE = "token_type";
+	public static final String TOKEN_VALUE = "value";
+
     private String token_type;
     private int expires_in;
-    private Object attributes;
+    private Object attribute;
     
 	public String getToken_type() {
 		return token_type;
@@ -22,17 +27,17 @@ public class TokenProvider {
 	public void setExpires_in(int expires_in) {
 		this.expires_in = expires_in;
 	}
-	public Object getAttributes() {
-		return attributes;
+	public Object getAttribute() {
+		return attribute;
 	}
-	public void setAttributes(Object attributes) {
-		this.attributes = attributes;
+	public void setAttribute(Object attribute) {
+		this.attribute = attribute;
 	}
 
-	public String attributesToJson() {
+	public String attributeToJson() {
 		JsonObject json = new JsonObject();
 
-		String[] parts = attributes.toString().split(",");
+		String[] parts = attribute.toString().split(",");
 		parts[0] = parts[0].replace("{", "");
 		parts[parts.length-1] = parts[parts.length-1].replace("}", "");
 		for(String line : Arrays.asList(parts)) {
@@ -43,4 +48,13 @@ public class TokenProvider {
 		return json.toString();
 	}
 
+	public Map<String, String> toMap() {
+		Map<String, String> map = new HashMap<String, String>();
+		
+		map.put(TOKEN_TYPE, token_type);
+		map.put(TOKEN_VALUE, attributeToJson());
+
+		return map;
+	}
+	
 }	
