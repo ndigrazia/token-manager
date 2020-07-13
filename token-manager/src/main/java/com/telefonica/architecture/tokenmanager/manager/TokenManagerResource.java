@@ -39,7 +39,7 @@ public class TokenManagerResource {
     ResourceProviderClient client;
 
     @GET
-    public TokenResponse getToken(@Context final HttpHeaders headers, @QueryParam("provider") final String provider) {
+    public Response getToken(@Context final HttpHeaders headers, @QueryParam("provider") final String provider) {
         try {
                 TokenResponseStr str = new TokenResponseStr();
                 TokenResponse token = str.getToken(redis, (con)->{
@@ -51,7 +51,7 @@ public class TokenManagerResource {
                 
                 return createResponse(value);
             });
-            return token;
+            return Response.ok(token).status(200).build();
         } catch (final TokenException e) {
             e.printStackTrace();
             throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
@@ -86,13 +86,13 @@ public class TokenManagerResource {
     }
 
     @POST
-    public TokenResponse postToken(@Context final HttpHeaders headers, @HeaderParam("provider") final String provider) {
+    public Response postToken(@Context final HttpHeaders headers, @HeaderParam("provider") final String provider) {
         try {
             TokenResponseStr str = new TokenResponseStr();
             TokenResponse token = str.getToken(redis, (con)->{
                 return createResponse(loadTokenFromProvider(provider, con));
             });
-            return token;
+            return Response.ok(token).status(201).build();
         } catch (final TokenException e) {
             e.printStackTrace();
             throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
