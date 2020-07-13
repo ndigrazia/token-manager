@@ -1,10 +1,11 @@
 package com.telefonica.architecture.tokenprovider;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import com.telefonica.architecture.tokenprovider.model.TokenAttributeResponse;
 import com.telefonica.architecture.tokenprovider.model.TokenResponse;
@@ -14,8 +15,8 @@ import com.telefonica.architecture.tokenprovider.model.TokenResponse;
 @Consumes(MediaType.APPLICATION_JSON)
 public class TokenProviderResource {
 
-    @GET
-    public TokenResponse getToken() {
+    @POST
+    public Response getToken() {
         final int HOUR = 1440;
 
         TokenAttributeResponse att = new TokenAttributeResponse();
@@ -26,7 +27,7 @@ public class TokenProviderResource {
         res.setExpires_in(HOUR);
         res.setAttribute(att);
 
-        return res;
+        return Response.ok(res).status(201).build();
     }
 
 }

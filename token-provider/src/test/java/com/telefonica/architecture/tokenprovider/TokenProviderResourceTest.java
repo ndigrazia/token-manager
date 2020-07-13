@@ -9,11 +9,12 @@ import static io.restassured.RestAssured.given;
 public class TokenProviderResourceTest {
 
     @Test
-    public void testHelloEndpoint() {
+    public void testTokenEndpoint() {
         given()
-          .when().get("/token")
+          .when().contentType("application/json")
+          .post("/token")
           .then()
-             .statusCode(200);
+             .statusCode(201);
     }
-
+    
 }
