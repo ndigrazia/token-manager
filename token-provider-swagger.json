@@ -1,0 +1,136 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Token Provider API",
+    "version": "1.0",
+    "description": "Token Provider API",
+    "contact": {
+      "name": "Nelson Di Grazia",
+      "email": "nelson.digrazia@telefonica.com"
+    }
+  },
+  "paths": {
+    "/token": {
+      "post": {
+        "tags": [
+          "Token"
+        ],
+        "parameters": [
+          {
+            "name": "x-correlator",
+            "description": "Correlation id for the different services.",
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "required": false
+          }
+        ],
+        "responses": {
+          "201": {
+            "headers": {
+              "x-correlator": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Correlation id for the different services."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            },
+            "description": "A token created."
+          },
+          "500": {
+            "headers": {
+              "x-correlator": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Correlation id for the different services."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "A server error."
+          }
+        },
+        "summary": "Retrieve a token",
+        "description": "Retrieve a token"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TokenAttributeResponse": {
+        "description": "POJO that represents the token attribute.",
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "A token.",
+            "type": "string"
+          }
+        }
+      },
+      "TokenResponse": {
+        "description": "POJO that represents the token contents.",
+        "required": [
+          "attribute",
+          "expires_in",
+          "token_type"
+        ],
+        "type": "object",
+        "properties": {
+          "attribute": {
+            "$ref": "#/components/schemas/TokenAttributeResponse",
+            "description": "An attribute that describes a token"
+          },
+          "expires_in": {
+            "format": "int32",
+            "description": "An expire date. (seconds)",
+            "type": "integer"
+          },
+          "token_type": {
+            "description": "A token type.",
+            "type": "string"
+          }
+        }
+      },
+      "Error": {
+        "title": "Root Type for Error",
+        "description": "Problem with the server",
+        "required": [
+          "code",
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "description": "A error code.",
+            "type": "string"
+          },
+          "message": {
+            "description": "A description error.\n",
+            "type": "string"
+          }
+        },
+        "example": {
+          "code": "String",
+          "message": "String"
+        }
+      }
+    }
+  }
+}

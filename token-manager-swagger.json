@@ -1,0 +1,187 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "Token Manager API",
+        "version": "1.0",
+        "description": "Token Manager API",
+        "contact": {
+            "name": "Nelson Di Grazia",
+            "email": "nelson.digrazia@telefonica.com"
+        }
+    },
+    "paths": {
+        "/token": {
+            "get": {
+                "tags": [
+                    "Token"
+                ],
+                "parameters": [
+                    {
+                        "name": "x-correlator",
+                        "description": "Correlation id for the different services.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "header"
+                    },
+                    {
+                        "name": "provider",
+                        "description": "A provider.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "headers": {
+                            "x-correlator": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "description": "Correlation id for the different services."
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TokenResponse"
+                                }
+                            }
+                        },
+                        "description": "OK."
+                    },
+                    "500": {
+                        "headers": {
+                            "x-correlator": {
+                              "schema": {
+                                "type": "string"
+                              },
+                              "description": "Correlation id for the different services."
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        },
+                        "description": "A server error."
+                    }
+                },
+                "summary": "Retrieve a token",
+                "description": "Retrieve a token"
+            },
+            "post": {
+                "tags": [
+                    "Token"
+                ],
+                "parameters": [
+                    {
+                        "name": "x-correlator",
+                        "description": "Correlation id for the different services.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "header",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "headers": {
+                            "x-correlator": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "description": "Correlation id for the different services."
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TokenResponse"
+                                }
+                            }
+                        },
+                        "description": "A token created."
+                    },
+                    "500": {
+                        "headers": {
+                            "x-correlator": {
+                              "schema": {
+                                "type": "string"
+                              },
+                              "description": "Correlation id for the different services."
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        },
+                        "description": "A server error."
+                    }
+                },
+                "summary": "Update a token",
+                "description": "Update a token"
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Error": {
+                "title": "Root Type for Error",
+                "description": "Problem with the server.",
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "description": "A error code.",
+                        "type": "string"
+                    },
+                    "message": {
+                        "description": "A description error.\n",
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "code": "String",
+                    "message": "String"
+                }
+            },
+            "TokenResponse": {
+                "description": "POJO that represents the token contents.",
+                "required": [
+                    "date",
+                    "type",
+                    "token"
+                ],
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "description": "A token type.",
+                        "type": "string"
+                    },
+                    "date": {
+                        "format": "date-time",
+                        "description": "A creation date.",
+                        "type": "string"
+                    },
+                    "token": {
+                        "description": "A token",
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}
