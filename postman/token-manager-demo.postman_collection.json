@@ -1,0 +1,90 @@
+{
+	"info": {
+		"_postman_id": "f70c7b1e-c8d1-4426-9f54-a6253f98ce2c",
+		"name": "token-manager-demo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://demo2946827.mockable.io/",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://demo2946827.mockable.io/",
+					"protocol": "http",
+					"host": [
+						"demo2946827",
+						"mockable",
+						"io"
+					],
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://token-manager-token-manager-demo.192.168.99.100.nip.io/token",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "provider",
+						"value": "ypf",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://token-manager-token-manager-demo.192.168.99.100.nip.io/token",
+					"protocol": "http",
+					"host": [
+						"token-manager-token-manager-demo",
+						"192",
+						"168",
+						"99",
+						"100",
+						"nip",
+						"io"
+					],
+					"path": [
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://token-manager-token-manager-demo.192.168.99.100.nip.io/token?provider=ypf",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://token-manager-token-manager-demo.192.168.99.100.nip.io/token?provider=ypf",
+					"protocol": "http",
+					"host": [
+						"token-manager-token-manager-demo",
+						"192",
+						"168",
+						"99",
+						"100",
+						"nip",
+						"io"
+					],
+					"path": [
+						"token"
+					],
+					"query": [
+						{
+							"key": "provider",
+							"value": "ypf"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
